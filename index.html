@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>یه سورپرایز برای علی ❤️</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #fff5f8;
+    color: #4f4f4f;
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+#hearts {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.heart {
+    position: absolute;
+    color: #ff4f81;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(105vh);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .7;
+    }
+
+    to {
+        transform: translateY(-15vh);
+        opacity: 0;
+    }
+}
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.box {
+    width: min(850px, 100%);
+    text-align: center;
+}
+
+.card {
+    background: white;
+    border: 1px solid #ffe1eb;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(201,47,98,.12);
+}
+
+h1 {
+    color: #c92f62;
+    font-size: clamp(24px, 6vw, 34px);
+}
+
+h2 {
+    color: #c92f62;
+}
+
+p {
+    font-size: 17px;
+    line-height: 2;
+    white-space: pre-line;
+}
+
+.big {
+    font-size: 70px;
+}
+
+button {
+    display: block;
+    width: min(650px, 100%);
+    margin: 10px auto;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background: #ff4f81;
+    color: white;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #c92f62;
+}
+
+input {
+    width: min(360px, 90%);
+    padding: 14px;
+    border: 1px solid #ffd0de;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.error {
+    color: #d32f2f;
+    font-weight: bold;
+    min-height: 28px;
+}
+
+.progress {
+    height: 8px;
+    background: #ffe1eb;
+    border-radius: 20px;
+    overflow: hidden;
+    max-width: 500px;
+    margin: 15px auto;
+}
+
+.progress div {
+    height: 100%;
+    background: #ff4f81;
+}
+
+.letter {
+    text-align: right;
+    white-space: pre-line;
+    line-height: 2.2;
+    font-size: 17px;
+    max-height: 55vh;
+    overflow-y: auto;
+}
+
+small {
+    color: #c92f62;
+}
+</style>
+</head>
+
+<body>
+
+<div id="hearts"></div>
+<div id="app"></div>
+
+<script>
+
+const SONG_URL =
+"https://play.radiojavan.com/song/asef-aria-refigh";
+
+/* رمزهای قابل قبول */
+const PASSWORDS = new Set([
+    "122",
+    "212",
+    "221"
+]);
+
+const FIRST_LETTER = `
+سلام علی
+
+تو حس‌هایی به من دادی که من هیچوقت تو زندگیم تجربه نکرده بودم.
+همون‌قد که بخاطر بودنت خوشحال بودم،
+همون‌قدر هم برای روزای نبودنت گریه کردم.
+
+علی،تو برای من شدی اون نگاه قشنگ خدا به زندگیم
+که همه چیزو عوض کرد 🥲♥️
+`;
+
+const FINAL_LETTER = `
+نمی‌دونم چطور این کارو دارم می‌کنم...
+خیلی براش تلاش کردم.
+چون می‌خواستم اولین نفر زندگیم باشی
+که بهش بگم:
+
+«ببین چی یاد گرفتم»
+
+دوست داشتم اولین چیزی که یاد می‌گیرم برای تو باشه.
+همیشه برای بهتر شدنم سعی خودتو کردی ♥️
+
+ما تا الان کلی چالش و دردسر و اتفاق پشت سر گذاشتیم.
+فکر کنم از این به بعدم همین باشه.
+
+ولی برای من هیچ‌چی از این قشنگ‌تر نیست
+که توی همه این اتفاقات تورو کنارم داشته باشم.
+
+دستم رو که دراز کنم،
+دست تو باشه که دستامو بگیره.
+
+بغلت باشه
+که این بدن بی‌جونمو زنده کنه.
+
+بمون برام 🥲🤍
+`;
+
+const QUESTIONS = [
+
+{
+    question:
+    "به نظرت من از ۱ تا ۱۰ چقدر دوست دختر خوبی‌ام برات؟ ❤️",
+
+    options: [
+        "۰",
+        "۳",
+        "۷",
+        "۱۰"
+    ],
+
+    correct: 3,
+
+    wrong:
+    "نه نه نه! 😂 دوباره فکر کن علی...\nمن که می‌دونم جوابش چیه 😏❤️"
+},
+
+{
+    question:
+    "چقدر منو دوست داری؟ 🥹❤️",
+
+    options: [
+        "زیاد",
+        "خیلی زیاد",
+        "خیلیییی زیاد",
+        "انقد دوست دارم که خوشحالم برای دوست دختری مثل تو"
+    ],
+
+    correct: 3,
+
+    wrong:
+    "این جواب هنوز کافی نیست 😏❤️\nدوباره انتخاب کن."
+},
+
+{
+    question:
+    "اگه قرار باشه بین همه‌ی آدمای دنیا فقط یه نفر رو برای شیطنت و دیوونه‌بازی‌هات انتخاب کنی، کیو انتخاب می‌کنی؟ 😂❤️",options: [
+        "دانیال😂",
+        "رفیقم",
+        "خودم 😎",
+        "پپیِ خودم ❤️"
+    ],
+
+    correct: 3,
+
+    wrong:
+    "نههه 😂\nانتخابت رو دوباره بررسی کن..."
+},
+
+{
+    question:
+    "اگه یه روز ازت بپرسم قشنگ‌ترین قسمت رابطه‌مون چیه، چی میگی؟ 🥹",
+
+    options: [
+        "خاطره‌هامون",
+        "خنده‌هامون",
+        "حرف زدن‌هامون",
+        "اینکه تو رو دارم ❤️"
+    ],
+
+    correct: 3,
+
+    wrong:
+    "جواب قشنگیه...\nولی جواب درست یه چیز دیگه‌ست ❤️"
+}
+
+];
+
+/* قلب‌های متحرک */
+
+function startHearts(count) {
+
+    const container =
+        document.getElementById("hearts");
+
+    container.innerHTML = "";
+
+    for (let i = 0; i < count; i++) {
+
+        const heart =
+            document.createElement("span");
+
+        heart.className = "heart";
+
+        heart.textContent = "♥";
+
+        heart.style.left =
+            Math.random() * 100 + "%";
+
+        heart.style.fontSize =
+            (10 + Math.random() * 18) + "px";
+
+        heart.style.animationDuration =
+            (5 + Math.random() * 7) + "s";
+
+        heart.style.animationDelay =
+            (-Math.random() * 8) + "s";
+
+        container.appendChild(heart);
+    }
+}
+
+/* نمایش صفحه */
+
+function showPage(content) {
+
+    document.getElementById("app").innerHTML =
+        `
+        <main class="page">
+            <div class="box">
+                ${content}
+            </div>
+        </main>
+        `;
+}
+
+/* دکمه */
+
+function button(text, action) {
+
+    return `
+        <button onclick="${action}">
+            ${text}
+        </button>
+    `;
+}
+
+/* صفحه ورود */
+
+function loginPage() {
+
+    startHearts(20);
+
+    showPage(`
+
+        <div class="big">♥</div>
+
+        <h1>
+            یه سورپرایز برای تو ❤️
+        </h1>
+
+        <p>
+            برای ورود، رمز مخصوص خودت رو وارد کن...
+        </p>
+
+        <input
+            id="password"
+            type="password"
+            inputmode="numeric"
+            placeholder="رمز"
+        >
+
+        <p>
+            <small>
+                راهنما: عدد روزای تولدمون رو قاطی کن<br>
+                ببینم میری تو یا نه سلطون علی 😏
+            </small>
+        </p>
+
+        <div id="error" class="error"></div>
+
+        ${button(
+            "ورود به سورپرایز ❤️",
+            "checkPassword()"
+        )}
+
+    `);
+
+    const input =
+        document.getElementById("password");
+
+    input.focus();
+
+    input.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+
+        }
+    );
+}
+
+/* بررسی رمز */
+
+function checkPassword() {
+
+    const input =
+        document.getElementById("password");
+
+    const error =
+        document.getElementById("error");
+
+    const entered =
+        input.value.trim();
+
+    if (PASSWORDS.has(entered)) {
+
+        welcomePage();
+
+    } else {
+
+        error.textContent =
+            "نه علی جان 😏 یه کم بیشتر فکر کن...";
+
+        input.value = "";
+
+        input.focus();
+    }
+}
+
+/* خوش‌آمد */
+
+function welcomePage() {
+
+    startHearts(22);
+
+    showPage(`
+
+        <div class="big">
+            ❤️
+        </div>
+
+        <h1>
+            سلام سلطون علی ❤️
+        </h1>
+
+        <p>
+            بالاخره تونستی وارد بشی!
+            اینجا یه گوشه‌ی کوچیکه که فقط برای تو ساختم.
+        </p>
+
+        ${button(
+            "ببینم چی برام آماده کردی 👀",
+            "firstLetterPage()"
+        )}
+
+    `);
+}
+
+/* نامه اول */
+
+function firstLetterPage() {
+
+    startHearts(0);
+
+    showPage(`
+
+        <h1>
+            نامه‌ای از فاطمه
+            (پپیِ علی)
+            به علیرضا
+            (علیِ فاطمه)
+        </h1>
+
+        <p>
+            <small>
+                شروع جدید این دو تو گل شکفته 🌷<br>
+                ۱۴۰۵/۰۴/۱۷
+            </small>
+        </p>
+
+        <div class="card">
+
+            <div
+                id="firstLetter"
+                class="letter"
+            ></div>
+
+        </div>
+
+        <div id="continue"></div>
+
+    `);
+
+    typeText(
+        "firstLetter",
+        FIRST_LETTER,
+        22,
+        function() {document.getElementById(
+                "continue"
+            ).innerHTML =
+                button(
+                    "ادامه... 🌷",
+                    "challengeIntroPage()"
+                );
+
+        }
+    );
+}
+
+/* تایپ متن */
+
+function typeText(
+    elementId,
+    text,
+    speed,
+    callback
+) {
+
+    const element =
+        document.getElementById(elementId);
+
+    let index = 0;
+
+    const timer =
+        setInterval(function() {
+
+            element.textContent =
+                text.slice(0, index);
+
+            index++;
+
+            if (index > text.length) {
+
+                clearInterval(timer);
+
+                if (callback) {
+                    callback();
+                }
+            }
+
+        }, speed);
+}
+
+/* معرفی چالش */
+
+function challengeIntroPage() {
+
+    startHearts(0);
+
+    showPage(`
+
+        <div class="big">
+            😏❤️
+        </div>
+
+        <h1>
+            حالا یه چالش کوچولو داریم 😏
+        </h1>
+
+        <p>
+            فقط ببینم واقعاً منو می‌شناسی یا نه... 😂❤️
+
+            چهار سؤال داریم.
+
+            جواب درست رو پیدا کن
+            تا بتونی به حرف آخر برسی.
+        </p>
+
+        ${button(
+            "شروع چالش 👀",
+            "questionPage(0)"
+        )}
+
+    `);
+}
+
+/* سؤال */
+
+function questionPage(index) {
+
+    startHearts(0);
+
+    const question =
+        QUESTIONS[index];
+
+    let optionsHTML = "";
+
+    question.options.forEach(
+        function(option, optionIndex) {
+
+            optionsHTML += `
+
+                <button
+                    onclick="chooseAnswer(
+                        ${index},
+                        ${optionIndex}
+                    )"
+                >
+                    ${option}
+                </button>
+
+            `;
+        }
+    );
+
+    const progress =
+        ((index + 1) /
+        QUESTIONS.length) * 100;
+
+    showPage(`
+
+        <h2>
+            چالش —
+            سؤال ${index + 1}
+            از
+            ${QUESTIONS.length}
+        </h2>
+
+        <div class="progress">
+            <div
+                style="width:${progress}%"
+            ></div>
+        </div>
+
+        <div class="card">
+
+            <p>
+                <b>
+                    ${question.question}
+                </b>
+            </p>
+
+            ${optionsHTML}
+
+        </div>
+
+    `);
+}
+
+/* جواب سؤال */
+
+function chooseAnswer(
+    questionIndex,
+    selected
+) {
+
+    const question =
+        QUESTIONS[questionIndex];
+
+    if (
+        selected ===
+        question.correct
+    ) {
+
+        if (
+            questionIndex + 1 <
+            QUESTIONS.length
+        ) {
+
+            questionPage(
+                questionIndex + 1
+            );
+
+        } else {
+
+            finalButtonPage();
+
+        }
+
+    } else {
+
+        alert(question.wrong);
+
+    }
+}
+
+/* پایان چالش */
+
+function finalButtonPage() {
+
+    startHearts(28);
+
+    showPage(`
+
+        <div class="big">
+            🎉❤️
+        </div>
+
+        <h1>
+            خب... هر چهار تا رو درست زدی 👀❤️
+        </h1>
+
+        <p>
+            آفرین به علیِ من 😌
+
+            ولی هنوز یه چیز مهم مونده...
+        </p>
+
+        ${button(
+            "حرف آخر... 💌",
+            "finalLetterPage()"
+        )}
+
+    `);
+}
+
+/* نامه نهایی */
+
+function finalLetterPage() {
+
+    startHearts(0);
+
+    showPage(`
+
+        <h1>
+            حرف آخر از فاطمه برای علی 🤍
+        </h1>
+
+        <div class="card">
+
+            <div
+                id="finalLetter"
+                class="letter"
+            ></div>
+
+        </div>
+
+        <div id="continue"></div>
+
+    `);
+
+    typeText(
+        "finalLetter",
+        FINAL_LETTER,
+        24,
+        function() {
+
+            document.getElementById(
+                "continue"
+            ).innerHTML =
+                button(
+                    "یه چیز آخر هم برات دارم... 🎵",
+                    "songPage()"
+                );
+
+        }
+    );
+}
+
+/* آهنگ */
+
+function songPage() {
+
+    startHearts(30);
+
+    showPage(`
+
+        <div class="big">
+            🎵
+        </div>
+
+        <h1>
+            این آهنگ رو با تو گوش میدم ❤️
+        </h1><p>
+            رفیق — آصف آریا
+
+            رسیدیم به آخر سورپرایز...
+            ولی امیدوارم داستانمون
+            هیچ‌وقت به آخر نرسه. 🤍
+        </p>
+
+        ${button(
+            "پخش آهنگ 🎵❤️",
+            "openSong()"
+        )}
+
+        <h2>
+            ماهگردمون مبارک علیِ من 🥲🤍
+        </h2>
+
+        <p>
+            <b>
+                دوستت دارم ❤️
+            </b>
+        </p>
+
+    `);
+}
+
+/* باز کردن آهنگ */
+
+function openSong() {
+
+    window.open(
+        SONG_URL,
+        "_blank"
+    );
+}
+
+/* شروع */
+
+loginPage();
+
+</script>
+
+</body>
+</html>
